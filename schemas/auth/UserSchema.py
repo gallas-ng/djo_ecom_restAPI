@@ -31,7 +31,8 @@ class UserSchema(SQLAlchemyAutoSchema):
     groups = fields.List(fields.Nested('GroupSchema'), dump_only=True)  # Assuming you have a GroupSchema
     feedbacks = fields.List(fields.Nested('FeedbackSchema'), dump_only=True)  # Assuming you have a FeedbackSchema
     store = fields.Nested('StoreSchema', dump_only=True)  # Assuming you have a StoreSchema
-
+    cart = fields.Nested('CartSchema', allow_none=True)
+    orders = fields.Nested('OrderSchema', many=True)
 
 class UserGroupSchema(SQLAlchemyAutoSchema):
     class Meta:

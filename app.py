@@ -18,6 +18,7 @@ from admin_views.StoreAdminView import StoreAdminView
 from admin_views.SubCategoryAdminView import SubCategoryAdminView
 from admin_views.TypeAdminView import TypeAdminView
 from admin_views.UserAdminView import UserAdminView
+
 from blocklist import BLOCKLIST
 from db import db
 from models import *
@@ -31,7 +32,7 @@ from resources.store import blp as StoreBlueprint
 from resources.feedback import blp as FeedbackBlueprint, Feedback
 from resources.sub_category import blp as SubCategoryBlueprint
 from resources.category import blp as CategoryBlueprint
-
+from resources.ordering.cart import blp as CarrtBlueprint
 
 def create_app(db_url=None):
     app = Flask(__name__)
@@ -98,17 +99,19 @@ def create_app(db_url=None):
     api.register_blueprint(SubCategoryBlueprint)
     api.register_blueprint(CategoryBlueprint)
     api.register_blueprint(FeedbackBlueprint)
+    api.register_blueprint(CarrtBlueprint)
 
     admin = Admin(app, name='Djo E-commerce Panel', theme=Bootstrap4Theme(swatch='lux'))
     admin.add_view(UserAdminView(UserModel, db.session, category='Auth'))
     admin.add_view(GroupAdminView(GroupModel, db.session, category='Auth'))
-    admin.add_view(TypeAdminView(TypeModel, db.session))
+    admin.add_view(TypeAdminView(TypeModel, db.session, category='Item'))
     admin.add_view(StoreAdminView(StoreModel, db.session))
-    admin.add_view(CategoryAdminView(CategoryModel, db.session))
-    admin.add_view(SubCategoryAdminView(SubCategoryModel, db.session))
-    admin.add_view(ProductAdminView(ProductModel, db.session))
-    admin.add_view(OptionAdminView(OptionModel, db.session))
-    admin.add_view(FeedbackAdminView(FeedbackModel, db.session))
+    admin.add_view(CategoryAdminView(CategoryModel, db.session, category='Countable'))
+    admin.add_view(SubCategoryAdminView(SubCategoryModel, db.session, category='Countable'))
+    admin.add_view(ProductAdminView(ProductModel, db.session, category='Item'))
+    admin.add_view(OptionAdminView(OptionModel, db.session, category='Item'))
+    admin.add_view(FeedbackAdminView(FeedbackModel, db.session, category='Item'))
+
 
     return app
 

@@ -1,4 +1,7 @@
 import datetime
+from tokenize import group
+
+from sqlalchemy.orm import relationship
 
 from db import db
 
@@ -28,6 +31,8 @@ class UserModel(db.Model):
 
     store = db.relationship('StoreModel', back_populates='owner', uselist=False)
 
+    cart = db.relationship('CartModel', back_populates='user', uselist=False)
 
+    orders = db.relationship('OrderModel', back_populates='user', cascade='all, delete')
 
 

@@ -1,14 +1,12 @@
-import uuid
-from flask import request
 from flask.views import MethodView
-from flask_jwt_extended import jwt_required, get_jwt
+from flask_jwt_extended import jwt_required
 from flask_smorest import abort, Blueprint
 
-from sqlalchemy.exc import SQLAlchemyError,IntegrityError
+from sqlalchemy.exc import SQLAlchemyError
 from db import db
 from models import GroupModel, UserModel
-from schemas.GroupSchema import GroupSchema
-from schemas.UserSchema import UserSchema, UserGroupSchema
+from schemas.auth.GroupSchema import GroupSchema
+from schemas.auth.UserSchema import UserGroupSchema
 
 blp = Blueprint('Groups', __name__, description="Operations on groups")
 

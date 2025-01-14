@@ -13,7 +13,10 @@ from sqlalchemy import or_
 from blocklist import BLOCKLIST
 from db import db
 from models import UserModel
-from schemas.UserSchema import UserSchema
+from schemas.auth.UserSchema import UserSchema
+from schemas.ordering.OrderSchema import OrderSchema
+from schemas.ordering.OrderItemSchema import OrderItemSchema
+from schemas.ordering.ShippingAddressSchema import ShippingAddressSchema
 
 blp = Blueprint("Users", __name__, description="Operations on users")
 

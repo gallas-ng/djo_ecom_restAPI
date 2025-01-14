@@ -1,5 +1,9 @@
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import rules
+from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
+
+from models import SubCategoryModel, StoreModel, OptionModel
+
 
 class ProductAdminView(ModelView):
     # Fields to display in the list view
@@ -10,6 +14,31 @@ class ProductAdminView(ModelView):
 
     # Fields to include in the create/edit form
     form_columns = ['label', 'price_vat', 'price_ht', 'quantity', 'description', 'weight', 'image', 'rating', 'ref', 'sub_category', 'store', 'options']
+
+    form_args = {
+        'sub_category': {
+            'query_factory': lambda: SubCategoryModel.query.all(),  # Fetch all users
+            'get_label': 'label',  # Use the username as the label for each user
+            'allow_blank': True,  # Allow the field to be blank
+        },
+        'store': {
+            'query_factory': lambda: StoreModel.query.all(),  # Fetch all users
+            'get_label': 'label',  # Use the username as the label for each user
+            'allow_blank': True,  # Allow the field to be blank
+        },
+        'options': {
+            'query_factory': lambda: OptionModel.query.all(),  # Fetch all users
+            'get_label': 'label',  # Use the username as the label for each user
+            'allow_blank': True,  # Allow the field to be blank
+        },
+    }
+
+    # Make multi-selection
+    form_overrides = {
+        'sub_category': QuerySelectField,
+        'store': QuerySelectField,
+        'options': QuerySelectMultipleField,
+    }
 
     # Add form rules (optional)
     form_create_rules = [
@@ -50,10 +79,3 @@ class ProductAdminView(ModelView):
         'store': lambda view, context, model, name: model.store.title if model.store else 'No Store',
         'options': lambda view, context, model, name: ', '.join([option.label for option in model.options]) if model.options else 'No Options'
     }
-
-    def on_model_change(self, form, model, is_created):
-        # Ensure no feedbacks are linked when creating or editing a product
-        if is_created and model.feedbacks:
-            model.feedbacks.clear()  # Clear the feedbacks field if it was inadvertently set
-
-        return super().on_model_change(form, model, is_created)

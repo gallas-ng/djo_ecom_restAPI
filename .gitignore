@@ -1,0 +1,9 @@
+*.env
+local_db.env
+.venv
+.vscode
+__pycache__
+data.db
+*.pyc
+.DS_Store
+.idea

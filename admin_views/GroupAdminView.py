@@ -1,4 +1,5 @@
 from flask_admin.contrib.sqla import ModelView
+from wtforms.fields.choices import SelectMultipleField
 from wtforms_sqlalchemy.fields import QuerySelectMultipleField
 
 from models import UserModel
@@ -20,6 +21,7 @@ class GroupAdminView(ModelView):
         }
     }
 
+    # Make multi-selection
     form_overrides = {
         'users': QuerySelectMultipleField  # Ensure multi-selection works
     }

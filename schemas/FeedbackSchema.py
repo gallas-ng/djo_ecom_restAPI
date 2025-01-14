@@ -12,7 +12,7 @@ class FeedbackSchema(SQLAlchemyAutoSchema):
 
     id = fields.Int(dump_only=True)
     message = fields.Str(allow_none=True)
-    nature = fields.Str(required=True)  # Assumes natureEnum is handled as a string in serialization
+    nature = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)
 
     user_id = fields.Int(dump_only=True)

@@ -26,6 +26,5 @@ class ProductModel(db.Model):
 
     options = db.relationship('OptionModel', back_populates='products', secondary='product_option')
 
-
     feedbacks = db.relationship('FeedbackModel', back_populates='product', lazy='dynamic', cascade='all, delete')
 

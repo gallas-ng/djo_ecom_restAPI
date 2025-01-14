@@ -10,18 +10,18 @@ class UserAdminView(ModelView):
         'isSuperAdmin', 'isSeller', 'isBuyer'
     ]
 
-    # Fields to exclude from the list view
-    column_exclude_list = ['password']
-
     # Fields to include in the create/edit form
     form_columns = [
         'username', 'email', 'password', 'first_name', 'last_name',
         'phone', 'isActive', 'isStaff', 'isAdmin', 'isSuperAdmin',
-        'isSeller', 'isBuyer', 'groups'
+        'isSeller', 'isBuyer'
     ]
+    # Fields to exclude from the list view
+    column_exclude_list = ['password']
+
 
     # Exclude fields from the create/edit form
-    form_excluded_columns = ['created_at', 'feedbacks']
+    form_excluded_columns = ['created_at', 'feedbacks', 'groups']
 
     # Add a password field that hides input
     form_args = {
@@ -30,11 +30,6 @@ class UserAdminView(ModelView):
                 'type': 'password'
             }
         },
-        'groups': {
-            'query_factory': lambda: GroupModel.query.all(),
-            'allow_blank': True,  # Allow the field to be left blank
-            'get_label': 'name'  # Display the group name in the dropdown
-        }
     }
 
     # Customize how relationships are displayed
@@ -53,7 +48,7 @@ class UserAdminView(ModelView):
         rules.FieldSet([  # Group related fields
             'username', 'email', 'password', 'first_name', 'last_name',
             'phone', 'isActive', 'isStaff', 'isAdmin', 'isSuperAdmin',
-            'isSeller', 'isBuyer', 'groups'
+            'isSeller', 'isBuyer',
         ], header='User Details'),
     ]
 
