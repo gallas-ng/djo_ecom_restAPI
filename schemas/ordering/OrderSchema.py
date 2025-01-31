@@ -14,4 +14,5 @@ class OrderSchema(SQLAlchemyAutoSchema):
     total_amount = fields.Float(required=True)
     status = fields.String(required=True)
     items = fields.Nested('OrderItemSchema', many=True)
+    shipping_mode = fields.Integer(required=True)
     shipping_address = fields.Nested('ShippingAddressSchema')

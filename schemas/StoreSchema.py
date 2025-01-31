@@ -16,17 +16,18 @@ class StoreSchema(SQLAlchemyAutoSchema):
     id = fields.Int(dump_only=True)
     title = fields.Str(required=True, validate=validate.Length(max=80))
     phone = fields.Str(validate=validate.Length(max=80))
-    image = fields.Raw(load_only=True, allow_none=True)  # Pour gérer les fichiers binaires
+    image = fields.Str()
     created_at = fields.DateTime(dump_only=True)
 
     # Nested relationships
     address = fields.Nested('AddressSchema', allow_none=True)
-    types = fields.List(fields.Nested('TypeSchema'), dump_only=True)
-    categories = fields.List(fields.Nested('CategorySchema'), dump_only=True)
-    products = fields.List(fields.Nested('ProductSchema'), dump_only=True)
+    # types = fields.List(fields.Nested('TypeSchema'), dump_only=True)
+    # categories = fields.List(fields.Nested('CategorySchema'), dump_only=True)
+    # products = fields.List(fields.Nested('ProductSchema'), dump_only=True)
+    #
+    # owner = fields.Nested('UserSchema', dump_only=True)
+    owner_id = fields.Int
 
-    owner = fields.Nested('UserSchema', dump_only=True)
-    owner_id = fields.Int(dump_only=True)
 
 class StoreTypeSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -52,3 +53,9 @@ class StoreCategorySchema(SQLAlchemyAutoSchema):
     # Relationships
     category = fields.Nested('CategorySchema', dump_only=True)  # Nested CategorySchema
     store = fields.Nested('StoreSchema', dump_only=True)  # Nested StoreSchema
+
+class StoreCategorySchemaInc(StoreSchema):
+    categories = fields.List(fields.Nested('CategorySchema'), dump_only=True)
+
+class StoreProductSchemaInc(StoreSchema):
+    products = fields.List(fields.Nested('ProductSchema'), dump_only=True)

@@ -19,4 +19,4 @@ class AddressSchema(SQLAlchemyAutoSchema):
     latitude = fields.Float(allow_none=True)
 
     store_id = fields.Int(dump_only=True)
-    store = fields.Nested('StoreSchema', dump_only=True)
+    # store = fields.Nested('StoreSchema', dump_only=True)

@@ -8,7 +8,7 @@ from sqlalchemy.exc import SQLAlchemyError,IntegrityError
 from db import db
 from models import TypeModel, StoreModel
 from schemas.TypeSchema import TypeSchema
-from schemas.StoreSchema import StoreTypeSchema
+from schemas.StoreSchema import StoreTypeSchema, StoreSchema, StoreCategorySchemaInc
 
 blp = Blueprint('Types', __name__, description="Operations on types")
 
@@ -96,3 +96,9 @@ class LinkTypeToStore(MethodView):
         return {"message": "Store removed from Type", "store": store, "type": type}
 
 
+@blp.route('/type/<int:type_id>/stores')
+class StoresByType(MethodView):
+    @blp.response(200, StoreCategorySchemaInc(many=True))
+    def get(self, type_id):
+        type = TypeModel.query.get_or_404(type_id)
+        return type.stores

@@ -2,6 +2,7 @@ from marshmallow import fields
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 from models import OrderItemModel
+from schemas.ProductSchema import ProductSchema
 
 
 class OrderItemSchema(SQLAlchemyAutoSchema):
@@ -15,3 +16,5 @@ class OrderItemSchema(SQLAlchemyAutoSchema):
     quantity = fields.Integer(required=True)
     price = fields.Float(required=True)
     subtotal = fields.Float(required=True)
+
+    product = fields.Nested(ProductSchema)

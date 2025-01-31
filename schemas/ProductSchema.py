@@ -25,13 +25,13 @@ class ProductSchema(SQLAlchemyAutoSchema):
 
     # Relationships
     sub_category_id = fields.Int(dump_only=True)
-    sub_category = fields.Nested('SubCategorySchema', dump_only=True)  # Nested SubCategorySchema
+    # sub_category = fields.Nested('SubCategorySchema', dump_only=True)  # Nested SubCategorySchema
 
     store_id = fields.Int(dump_only=True)
-    store = fields.Nested('StoreSchema', dump_only=True)  # Nested StoreSchema
+    # store = fields.Nested('StoreSchema', dump_only=True)  # Nested StoreSchema
 
-    options = fields.Nested('OptionSchema', many=True, dump_only=True)  # Nested OptionSchema for multiple options
-    feedbacks = fields.Nested('FeedbackSchema', many=True, dump_only=True)  # Nested FeedbackSchema for multiple feedbacks
+    # options = fields.Nested('OptionSchema', many=True, dump_only=True)  # Nested OptionSchema for multiple options
+    # feedbacks = fields.Nested('FeedbackSchema', many=True, dump_only=True)  # Nested FeedbackSchema for multiple feedbacks
 
 
 class ProductOptionSchema(SQLAlchemyAutoSchema):

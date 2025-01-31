@@ -26,4 +26,5 @@ from models.ordering.order_item import OrderItemModel
 from models.ordering.cart import CartModel
 from models.ordering.cart_item import CartItemModel
 from models.ordering.shipping_address import ShippingAddressModel
-
+from models.ordering.payment import PaymentModel
+from models.ordering.payment_log import PaymentLogModel

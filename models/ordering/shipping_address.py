@@ -14,4 +14,4 @@ class ShippingAddressModel(db.Model):
     country = db.Column(db.String(50), nullable=True)
 
     order = db.relationship('OrderModel', back_populates='shipping_address')
-    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=True)

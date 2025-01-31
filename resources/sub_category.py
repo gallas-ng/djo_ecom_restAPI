@@ -3,24 +3,20 @@ from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
 
 from db import db
-from models import SubCategoryModel, CategoryModel
-from schemas.SubCategorySchema import SubCategorySchema
+from models import SubCategoryModel, CategoryModel, StoreModel
+from schemas.ProductSchema import ProductSchema
+from schemas.SubCategorySchema import SubCategorySchema, SubCatProductsSchema
 
 blp = Blueprint("Sub_categories", __name__, description="Operations on sub_categories")
 
 
-@blp.route("/category/<string:category_id>/sub_category")
-class SubCatInCategory(MethodView):
-    @blp.response(200, SubCategorySchema(many=True))
-    def get(self, category_id):
-        category = CategoryModel.query.get_or_404(category_id)
-
-        return category.sub_categories.all()  # lazy="dynamic" means 'tags' is a query
-
+@blp.route('/category/<string:category_id>/sub_category')
+class SubCategoryAdd(MethodView):
     @blp.arguments(SubCategorySchema)
     @blp.response(201, SubCategorySchema)
     def post(self, sub_category_data, category_id):
-        if SubCategoryModel.query.filter(SubCategoryModel.category_id == category_id, SubCategoryModel.label == sub_category_data["label"]).first():
+        if SubCategoryModel.query.filter(SubCategoryModel.category_id == category_id,
+                                         SubCategoryModel.label == sub_category_data["label"]).first():
             abort(400, message="A sub_category with that name already exists in that category.")
 
         sub_category = SubCategoryModel(**sub_category_data, category_id=category_id)
@@ -35,8 +31,6 @@ class SubCatInCategory(MethodView):
             )
 
         return sub_category
-
-
 
 @blp.route("/sub_category/<string:sub_category_id>")
 class SubCategory(MethodView):
@@ -66,3 +60,29 @@ class SubCategory(MethodView):
                 400,
                 message="Could not delete sub_category. Make sure sub_category is not associated with any items, then try again.",  # noqa: E501
             )
+
+@blp.route("/sub_category/<string:sub_category_id>/products")
+class ProductList(MethodView):
+    @blp.response(200, SubCatProductsSchema(many=True))
+    def get(self, sub_category_id):
+        sub_category = SubCategoryModel.query.get_or_404(sub_category_id)
+
+        return sub_category.products.all()
+
+@blp.route("/store/<int:store_id>/sub_category/<int:sub_category_id>/products")
+class StoreSubCatProductList(MethodView):
+    @blp.response(200, ProductSchema(many=True))  # Utilisez le schéma approprié pour vos produits
+    def get(self, store_id, sub_category_id):
+        """
+        Filtre les produits d'une sous-catégorie spécifique dans un magasin donné.
+        """
+        # Vérifier si le magasin existe
+        store = StoreModel.query.get_or_404(store_id)
+
+        # Vérifier si la sous-catégorie existe
+        sub_category = SubCategoryModel.query.get_or_404(sub_category_id)
+
+        # Filtrer les produits qui appartiennent à la sous-catégorie ET au magasin donné
+        products = sub_category.products.filter_by(store_id=store_id).all()
+
+        return products

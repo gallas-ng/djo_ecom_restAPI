@@ -1,4 +1,6 @@
 import os
+
+import cloudinary
 from flask import Flask, jsonify
 from flask_admin.theme import Bootstrap4Theme
 from flask_jwt_extended import JWTManager
@@ -32,7 +34,9 @@ from resources.store import blp as StoreBlueprint
 from resources.feedback import blp as FeedbackBlueprint, Feedback
 from resources.sub_category import blp as SubCategoryBlueprint
 from resources.category import blp as CategoryBlueprint
-from resources.ordering.cart import blp as CarrtBlueprint
+from resources.ordering.cart import blp as CartBlueprint
+from resources.ordering.order import blp as OrderBlueprint
+from resources.ordering.payment import blp as PaymentBlueprint
 
 def create_app(db_url=None):
     app = Flask(__name__)
@@ -55,7 +59,9 @@ def create_app(db_url=None):
     migrate = Migrate(app, db)
 
     api = Api(app)
-    CORS(app)
+    # CORS(app)
+    CORS(app, supports_credentials=True, origins=['http://localhost:5173'])  # React's dev server
+
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "your-secret-key")
 
     jwt = JWTManager(app)
@@ -90,6 +96,13 @@ def create_app(db_url=None):
     def create_tables():
         db.create_all()
 
+    cloudinary.config(
+        cloud_name="db0jsyy64",
+        api_key="796289861528973",
+        api_secret="B3zVCM8uTHf9K_qVWJQ4IinJLMw",
+        secure=True
+    )
+
     api.register_blueprint(UserBlueprint)
     api.register_blueprint(GroupBlueprint)
     api.register_blueprint(StoreBlueprint)
@@ -99,7 +112,9 @@ def create_app(db_url=None):
     api.register_blueprint(SubCategoryBlueprint)
     api.register_blueprint(CategoryBlueprint)
     api.register_blueprint(FeedbackBlueprint)
-    api.register_blueprint(CarrtBlueprint)
+    api.register_blueprint(CartBlueprint)
+    api.register_blueprint(OrderBlueprint)
+    api.register_blueprint(PaymentBlueprint)
 
     admin = Admin(app, name='Djo E-commerce Panel', theme=Bootstrap4Theme(swatch='lux'))
     admin.add_view(UserAdminView(UserModel, db.session, category='Auth'))
@@ -111,6 +126,7 @@ def create_app(db_url=None):
     admin.add_view(ProductAdminView(ProductModel, db.session, category='Item'))
     admin.add_view(OptionAdminView(OptionModel, db.session, category='Item'))
     admin.add_view(FeedbackAdminView(FeedbackModel, db.session, category='Item'))
+
 
 
     return app

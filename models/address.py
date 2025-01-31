@@ -1,5 +1,6 @@
 from db import db
 
+
 class AddressModel(db.Model):
     __tablename__ = 'address'
 
@@ -12,4 +13,4 @@ class AddressModel(db.Model):
     latitude = db.Column(db.Float)
 
     store = db.relationship("StoreModel", back_populates="address")
-    store_id = db.Column(db.Integer, db.ForeignKey('store.id'))
+    store_id = db.Column(db.Integer, db.ForeignKey('store.id'), nullable=True)

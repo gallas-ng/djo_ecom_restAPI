@@ -6,8 +6,9 @@ from flask_smorest import abort, Blueprint
 
 from sqlalchemy.exc import SQLAlchemyError,IntegrityError
 from db import db
-from models import CategoryModel, StoreModel, StoreCategory
-from schemas.CategorySchema import CategorySchema
+from models import CategoryModel, StoreModel, StoreCategory, SubCategoryModel
+from schemas.CategorySchema import CategorySchema, CategorySubSchema
+from schemas.SubCategorySchema import SubCategorySchema
 from schemas.StoreSchema import StoreCategorySchema
 
 blp = Blueprint('Categories', __name__, description="Operations on categories")
@@ -89,5 +90,16 @@ class LinkCategoriesToStore(MethodView):
             abort(500, message="An error occurred while inserting the category.")
 
         return {"message": "Store removed from Type", "store": store, "type": type}
+
+
+@blp.route("/category/<string:category_id>/sub_categories")
+class SubCatInCategory(MethodView):
+    @blp.response(200, CategorySubSchema(many=True))
+    def get(self, category_id):
+        category = CategoryModel.query.get_or_404(category_id)
+        sub_categories_with_products = category.sub_categories.filter(SubCategoryModel.products.any()).all()
+
+        return sub_categories_with_products
+
 
 

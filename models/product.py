@@ -12,7 +12,7 @@ class ProductModel(db.Model):
     quantity = db.Column(db.Integer, unique=False, nullable=False)
     description = db.Column(db.Text, unique=False, nullable=True)
     weight = db.Column(db.Float, unique=False, nullable=True)
-    image = db.Column(db.LargeBinary, unique=False, nullable=True)
+    image = db.Column(db.String(255), unique=False, nullable=True)
     rating = db.Column(db.Float, unique=False, nullable=True)
     ref = db.Column(db.String(100), unique=False, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
@@ -27,4 +27,16 @@ class ProductModel(db.Model):
     options = db.relationship('OptionModel', back_populates='products', secondary='product_option')
 
     feedbacks = db.relationship('FeedbackModel', back_populates='product', lazy='dynamic', cascade='all, delete')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'label': self.label,
+            'price_vat': self.price_vat,
+            'price_ht': self.price_ht,
+            'quantity': self.quantity,
+            'description': self.description,
+            'weight': self.weight,
+            'image': self.image,
+        }
 

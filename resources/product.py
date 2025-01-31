@@ -1,5 +1,6 @@
 from itertools import product
 
+from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
@@ -14,12 +15,6 @@ blp = Blueprint("Products", __name__, description="Operations on products")
 
 @blp.route("/sub_category/<string:sub_category_id>/product")
 class ProductList(MethodView):
-    @blp.response(200, ProductSchema(many=True))
-    def get(self, sub_category_id):
-        sub_category = SubCategoryModel.query.get_or_404(sub_category_id)
-
-        return sub_category.products.all()  # lazy="dynamic" means 'tags' is a query
-
     @blp.arguments(ProductSchema)
     @blp.response(201, ProductSchema)
     def post(self, product_data, sub_category_id):
@@ -67,3 +62,20 @@ class Product(MethodView):
                 400,
                 message="Could not delete product. Make sure product is not associated with any sub cats, then try again.",  # noqa: E501
             )
+
+@blp.route('/product/rate/upd')
+class ProductRate(MethodView):
+    @blp.response(200)
+    def put(self):
+        data = request.get_json()
+        product = ProductModel.query.get_or_404(data["product_id"])
+
+        if not product:
+            abort(400, message="Product does not exist.")
+
+        product.rating = data["rate"]
+        db.session.add(product)
+        db.session.commit()
+
+        return "Product updated."
+

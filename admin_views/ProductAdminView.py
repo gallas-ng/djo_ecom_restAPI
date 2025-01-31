@@ -1,5 +1,8 @@
+import cloudinary
+import cloudinary.uploader
 from flask_admin.contrib.sqla import ModelView
 from flask_admin.form import rules
+from wtforms.fields.simple import FileField
 from wtforms_sqlalchemy.fields import QuerySelectField, QuerySelectMultipleField
 
 from models import SubCategoryModel, StoreModel, OptionModel
@@ -23,7 +26,7 @@ class ProductAdminView(ModelView):
         },
         'store': {
             'query_factory': lambda: StoreModel.query.all(),  # Fetch all users
-            'get_label': 'label',  # Use the username as the label for each user
+            'get_label': 'title',  # Use the username as the label for each user
             'allow_blank': True,  # Allow the field to be blank
         },
         'options': {
@@ -38,6 +41,7 @@ class ProductAdminView(ModelView):
         'sub_category': QuerySelectField,
         'store': QuerySelectField,
         'options': QuerySelectMultipleField,
+        'image' : FileField
     }
 
     # Add form rules (optional)
@@ -64,6 +68,14 @@ class ProductAdminView(ModelView):
         'options': 'Options'
     }
 
+    def on_model_change(self, form, model, is_created):
+        if form.image.data:
+            try:
+                # Upload image to Cloudinary
+                upload_result = cloudinary.uploader.upload(form.image.data)
+                model.image = upload_result['secure_url']
+            except Exception as e:
+                raise ValueError(f"Image upload failed: {str(e)}")
     # Searchable fields
     column_searchable_list = ['label', 'description', 'ref']
 

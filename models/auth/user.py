@@ -16,7 +16,7 @@ class UserModel(db.Model):
     last_name = db.Column(db.String(80), nullable=True)
     phone = db.Column(db.String(80), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
-
+    google_id = db.Column(db.String(200), nullable=True)
 
     isActive = db.Column(db.Boolean, default=True, nullable=False)
     isStaff = db.Column(db.Boolean, default=False, nullable=False)
@@ -35,4 +35,14 @@ class UserModel(db.Model):
 
     orders = db.relationship('OrderModel', back_populates='user', cascade='all, delete')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'phone': self.phone,
+            'isSeller': self.isSeller,
+        }
 

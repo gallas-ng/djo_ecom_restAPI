@@ -1,6 +1,6 @@
 import datetime
-
 from db import db
+
 
 class CategoryModel(db.Model):
     __tablename__ = 'category'

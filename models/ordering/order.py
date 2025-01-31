@@ -10,6 +10,7 @@ class OrderModel(db.Model):
     status = db.Column(db.String(50), nullable=False, default='pending')  # e.g., 'pending', 'shipped'
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC), onupdate=datetime.datetime.now)
+    shipping_mode = db.Column(db.Integer, nullable=False, default=0)
 
     user = db.relationship('UserModel', back_populates='orders')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -17,3 +18,5 @@ class OrderModel(db.Model):
     items = db.relationship('OrderItemModel', back_populates='order', cascade='all, delete-orphan')
 
     shipping_address = db.relationship('ShippingAddressModel', back_populates='order', uselist=False)
+
+    payment = db.relationship('PaymentModel', uselist=False, back_populates='order')

@@ -1,3 +1,5 @@
+import cloudinary
+import cloudinary.uploader
 from wtforms.fields.choices import SelectMultipleField, SelectField
 from wtforms.fields.numeric import FloatField
 from wtforms.fields.simple import StringField, FileField
@@ -37,13 +39,19 @@ class StoreAdminView(ModelView):
     def on_form_prefill(self, form, id):
         store = StoreModel.query.get(id)
         if store:
-            form.types.data = [t.id for t in store.types]
-            form.categories.data = [c.id for c in store.categories]
-            form.owner.data = store.owner_id
+            form.types.data = store.types
+            form.categories.data = store.categories
+            form.owner.data = store.owner
 
     def on_model_change(self, form, model, is_created):
         if form.image.data:
-            model.image = form.image.data.read()
+            try:
+                # Upload image to Cloudinary
+                upload_result = cloudinary.uploader.upload(form.image.data)
+                model.image = upload_result['secure_url']
+            except Exception as e:
+                raise ValueError(f"Image upload failed: {str(e)}")
+
         if is_created:
             address = AddressModel(
                 street=form.street.data,
@@ -54,7 +62,7 @@ class StoreAdminView(ModelView):
                 latitude=form.latitude.data
             )
             model.address = address
-            db.session.add(address)
+            # db.session.add(address)
         else:
             model.address.street = form.street.data
             model.address.number = form.number.data
@@ -63,9 +71,9 @@ class StoreAdminView(ModelView):
             model.address.longitude = form.longitude.data
             model.address.latitude = form.latitude.data
 
-        model.types = TypeModel.query.filter(TypeModel.id.in_(form.types.data)).all()
-        model.categories = CategoryModel.query.filter(CategoryModel.id.in_(form.categories.data)).all()
-        model.owner_id = form.owner.data
+        model.types = TypeModel.query.filter(TypeModel.id.in_([t.id for t in form.types.data])).all()
+        model.categories = CategoryModel.query.filter(CategoryModel.id.in_([c.id for c in form.categories.data])).all()
+        model.owner_id = form.owner.data.id
 
 
 #

@@ -1,5 +1,6 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, validate
+from sqlalchemy import false
 
 from db import db
 from models import UserModel, UserGroup  # Adjust import paths as needed
@@ -12,13 +13,14 @@ class UserSchema(SQLAlchemyAutoSchema):
         include_relationships = True  # Ensures relationships are included
 
     id = fields.Int(dump_only=True)
-    username = fields.Str(required=True, validate=validate.Length(max=80))
+    username = fields.Str(required=False, validate=validate.Length(max=80))
     email = fields.Str(required=True, validate=validate.Email())
     password = fields.Str(required=True)  # You might want to handle password securely
     first_name = fields.Str(allow_none=True)
     last_name = fields.Str(allow_none=True)
     phone = fields.Str(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
+    google_id = fields.Str(allow_none=True)
 
     isActive = fields.Bool(default=True)
     isStaff = fields.Bool(default=False)

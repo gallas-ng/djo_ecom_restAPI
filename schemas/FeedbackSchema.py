@@ -16,7 +16,7 @@ class FeedbackSchema(SQLAlchemyAutoSchema):
     created_at = fields.DateTime(dump_only=True)
 
     user_id = fields.Int(dump_only=True)
-    user = fields.Nested('UserSchema', dump_only=True)
+    # user = fields.Nested('UserSchema', dump_only=True)
     product_id = fields.Int(dump_only=True)
-    product = fields.Nested('ProductSchema', dump_only=True)
+    # product = fields.Nested('ProductSchema', dump_only=True)
 

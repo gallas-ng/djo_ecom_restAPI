@@ -15,5 +15,8 @@ class CategorySchema(SQLAlchemyAutoSchema):
     description = fields.Str(allow_none=True)
     created_at = fields.DateTime(dump_only=True)
 
-    stores = fields.List(fields.Nested('StoreSchema'), dump_only=True)
+    # stores = fields.List(fields.Nested('StoreSchema'), dump_only=True)
+    # sub_categories = fields.List(fields.Nested('SubCategorySchema'), dump_only=True)
+
+class CategorySubSchema(CategorySchema):
     sub_categories = fields.List(fields.Nested('SubCategorySchema'), dump_only=True)
