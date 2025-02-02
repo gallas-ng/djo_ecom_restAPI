@@ -19,14 +19,15 @@ class StoreSchema(SQLAlchemyAutoSchema):
     image = fields.Str()
     created_at = fields.DateTime(dump_only=True)
 
-    # Nested relationships
     address = fields.Nested('AddressSchema', allow_none=True)
-    # types = fields.List(fields.Nested('TypeSchema'), dump_only=True)
+    owner_id = fields.Int()
+
+    # Nested relationships
+    types = fields.List(fields.Nested('TypeSchema'), dump_only=True)
     # categories = fields.List(fields.Nested('CategorySchema'), dump_only=True)
     # products = fields.List(fields.Nested('ProductSchema'), dump_only=True)
     #
     # owner = fields.Nested('UserSchema', dump_only=True)
-    owner_id = fields.Int
 
 
 class StoreTypeSchema(SQLAlchemyAutoSchema):

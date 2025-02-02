@@ -13,4 +13,4 @@ class TypeSchema(SQLAlchemyAutoSchema):
     label = fields.Str(required=True, validate=validate.Length(max=55))
     code = fields.Str(required=True, validate=validate.Length(max=7))
 
-    stores = fields.List(fields.Nested('StoreSchema'), dump_only=True)
+    # stores = fields.List(fields.Nested('StoreSchema'), dump_only=True)
