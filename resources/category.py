@@ -101,5 +101,14 @@ class SubCatInCategory(MethodView):
 
         return sub_categories_with_products
 
+@blp.route("/store/<string:store_id>/types/categories")
+class CategoriesInStore(MethodView):
+    @blp.response(200, CategorySubSchema(many=True))
+    def get(self, store_id):
+        store = StoreModel.query.get_or_404(store_id)
+        categories = [category for type in store.types for category in type.categories]
+
+        return categories
+
 
 

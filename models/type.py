@@ -9,3 +9,5 @@ class TypeModel(db.Model):
 
     stores = db.relationship('StoreModel', back_populates='types', secondary='store_type')
 
+    categories = db.relationship('CategoryModel', back_populates='type', lazy='dynamic', cascade='all, delete-orphan')
+

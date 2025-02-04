@@ -97,6 +97,7 @@ class CategoriesByStore(MethodView):
 
 @blp.route('/user/store/<int:user_id>')
 class SellerStore(MethodView):
+    @jwt_required()
     @blp.response(200, StoreSchema)
     def get(self, user_id):
         store = StoreModel.query.filter_by(owner_id=user_id).first()
@@ -124,7 +125,7 @@ class SellerStoreAdd(MethodView):
         address = AddressModel(
             street=request.form['street'],
             number=request.form['number'],
-            # district=request.form['district'],
+            district=request.form['district'],
             city=request.form['city'],
             state=request.form['state'],
         )
@@ -169,30 +170,32 @@ class SellerStoreAdd(MethodView):
 
 @blp.route('/seller/store/<int:store_id>')
 class SellerStoreEdit(MethodView):
+    @jwt_required()
     @blp.response(200, StoreSchema)
-    def get(self, store_id):
+    def put(self, store_id):
         store = StoreModel.query.get_or_404(store_id)
         user_id = get_jwt_identity()
         types = request.form['types']
         types_id = json.loads(types)
 
+        print(request.form)
+
         if store:
-            if user_id != store.owner_id:
+            if int(user_id) != store.owner_id:
                 abort(403, message='You are not the owner of the store')
 
         address = None
         if store.address:
             address = store.address
         else:
-            address = AddressModel(
-                street=request.form['street'],
-                number=request.form['number'],
-                # district=request.form['district'],
-                city=request.form['city'],
-                state=request.form['state'],
-            )
-            db.session.add(address)
-            db.session.flush()
+            address = AddressModel()
+        address.street = request.form['street']
+        address.number = request.form['number']
+        address.district = request.form['district']
+        address.city = request.form['city']
+        address.state = request.form['state']
+
+        db.session.add(address)
 
         image_url = None
         if "image" in request.files:
@@ -200,6 +203,8 @@ class SellerStoreEdit(MethodView):
             if uploaded_file:
                 upload_result = cloudinary.uploader.upload(uploaded_file)
                 image_url = upload_result.get("secure_url")
+        elif store.image == request.form['image']:
+            image_url = request.form['image']
         else:
             abort(404, message='Please upload a logo')
 
@@ -226,7 +231,7 @@ class SellerStoreEdit(MethodView):
             db.session.commit()
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": "An error occurred while processing the order", "details": str(e)}), 500
+            return jsonify({"error": "An error occurred while processing the store", "details": str(e)}), 500
 
         return store
 

@@ -3,8 +3,9 @@ from flask import request, jsonify, make_response
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from flask_jwt_extended import jwt_required, get_jwt_identity
+from sqlalchemy.orm import joinedload
 
-from models import CartModel, OrderModel, ShippingAddressModel, CartItemModel, OrderItemModel
+from models import CartModel, OrderModel, ShippingAddressModel, CartItemModel, OrderItemModel, ProductModel, UserModel
 from db import db
 
 blp = Blueprint("Order", __name__, description="Operations on the orders")
@@ -111,3 +112,48 @@ class OrderUpdate(MethodView):
             return jsonify({"error": "An error occurred while processing the order", "details": str(e)}), 500
 
         return jsonify({"message": "Order updated successfully", "order_id": order.id}), 201
+
+
+
+
+@blp.route('/store/<int:store_id>/orders')
+class PurchaseHistoryResource(MethodView):
+    @jwt_required()
+    @blp.response(200)
+    def get(self, store_id):
+        """Store products purchase history"""
+        user_id = get_jwt_identity()
+
+        purchases = (
+            db.session.query(
+                ProductModel.label.label("product_name"),
+                ProductModel.rating.label("rate"),
+                OrderItemModel.quantity,
+                (OrderItemModel.price * OrderItemModel.quantity).label("subtotal"),
+                OrderModel.created_at.label("purchase_date"),
+                UserModel.username.label("user")
+            )
+            .join(OrderItemModel, ProductModel.id == OrderItemModel.product_id)
+            .join(OrderModel, OrderItemModel.order_id == OrderModel.id)
+            .join(UserModel, OrderModel.user_id == UserModel.id)
+            .filter(ProductModel.store_id == store_id)
+            .all()
+        )
+
+        if not purchases:
+            return {"message": "Aucun achat trouvé pour ce magasin"}, 404
+
+
+        purchases_data = [
+            {
+                "product_name": p.product_name,
+                "quantity": p.quantity,
+                "subtotal": p.subtotal,
+                "purchase_date": p.purchase_date.strftime("%Y-%m-%d %H:%M:%S"),
+                "user": p.user,
+                "rate": p.rate
+            }
+            for p in purchases
+        ]
+
+        return {"purchases": purchases_data}

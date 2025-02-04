@@ -7,6 +7,7 @@ class AddressModel(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     street = db.Column(db.String(255), nullable=False)
     number = db.Column(db.String(5), nullable=False)
+    district = db.Column(db.String(255), nullable=False, default='')
     city = db.Column(db.String(50), nullable=False)
     state = db.Column(db.String(50), nullable=False)
     longitude = db.Column(db.Float, nullable=True)
