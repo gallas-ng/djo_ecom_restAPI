@@ -3,7 +3,7 @@ from marshmallow import fields, validate
 from sqlalchemy import false
 
 from db import db
-from models import UserModel, UserGroup  # Adjust import paths as needed
+from models import UserModel, UserGroup
 
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
@@ -30,9 +30,9 @@ class UserSchema(SQLAlchemyAutoSchema):
     isBuyer = fields.Bool(default=False)
 
     # Relationships
-    groups = fields.List(fields.Nested('GroupSchema'), dump_only=True)  # Assuming you have a GroupSchema
-    feedbacks = fields.List(fields.Nested('FeedbackSchema'), dump_only=True)  # Assuming you have a FeedbackSchema
-    store = fields.Nested('StoreSchema', dump_only=True)  # Assuming you have a StoreSchema
+    groups = fields.List(fields.Nested('GroupSchema'), dump_only=True)
+    feedbacks = fields.List(fields.Nested('FeedbackSchema'), dump_only=True)
+    store = fields.Nested('StoreSchema', dump_only=True)
     cart = fields.Nested('CartSchema', allow_none=True)
     orders = fields.Nested('OrderSchema', many=True)
 
@@ -47,5 +47,5 @@ class UserGroupSchema(SQLAlchemyAutoSchema):
     group_id = fields.Int(dump_only=True)
 
     # Relationships
-    user = fields.Nested('UserSchema', dump_only=True)  # Assuming you have a UserSchema
-    group = fields.Nested('GroupSchema', dump_only=True)  # Assuming you have a GroupSchema
+    user = fields.Nested('UserSchema', dump_only=True)
+    group = fields.Nested('GroupSchema', dump_only=True)

@@ -11,7 +11,7 @@ class StoreModel(db.Model):
     image = db.Column(db.String(255), nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
 
-
+    #Relationship
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     owner = db.relationship('UserModel', back_populates='store')
 

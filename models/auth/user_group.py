@@ -1,5 +1,6 @@
 from db import db
 
+
 class UserGroup(db.Model):
     __tablename__ = 'user_group'
 

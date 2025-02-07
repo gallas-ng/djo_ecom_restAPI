@@ -10,6 +10,8 @@ from schemas.auth.UserSchema import UserGroupSchema
 
 blp = Blueprint('Groups', __name__, description="Operations on groups")
 
+# Unused
+
 @blp.route('/group/<string:group_id>')
 class Group(MethodView):
     @blp.response(200, GroupSchema) # *1 What should be returned ?

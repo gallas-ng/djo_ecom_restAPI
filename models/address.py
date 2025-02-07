@@ -13,5 +13,6 @@ class AddressModel(db.Model):
     longitude = db.Column(db.Float, nullable=True)
     latitude = db.Column(db.Float, nullable=True)
 
+    #Relationship
     store = db.relationship("StoreModel", back_populates="address")
     store_id = db.Column(db.Integer, db.ForeignKey('store.id'), nullable=True)

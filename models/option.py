@@ -10,5 +10,6 @@ class OptionModel(db.Model):
     label = db.Column(db.String(50), nullable=False)
     value = db.Column(db.String(80), nullable=False)
 
+    #Relationship
     products = db.relationship('ProductModel', back_populates='options', secondary='product_option')
 

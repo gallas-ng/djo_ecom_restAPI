@@ -13,5 +13,6 @@ class ShippingAddressModel(db.Model):
     postal_code = db.Column(db.String(20), nullable=True)
     country = db.Column(db.String(50), nullable=True)
 
+    #Relationship
     order = db.relationship('OrderModel', back_populates='shipping_address')
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=True)

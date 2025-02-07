@@ -15,6 +15,7 @@ class FeedbackSchema(SQLAlchemyAutoSchema):
     nature = fields.Str(required=True)
     created_at = fields.DateTime(dump_only=True)
 
+    # Relationships
     user_id = fields.Int(dump_only=True)
     # user = fields.Nested('UserSchema', dump_only=True)
     product_id = fields.Int(dump_only=True)

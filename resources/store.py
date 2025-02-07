@@ -23,31 +23,20 @@ blp = Blueprint('Stores', __name__, description="Operations on stores")
 class Store(MethodView):
     @blp.response(200, StoreSchema)
     def get(self, store_id):
+        """
+        Returns a store
+        :param store_id:
+        :return:
+        """
         store = StoreModel.query.get_or_404(store_id)
         return store
 
-    def put(self, store_data, store_id):
-        store = StoreModel.query.get_or_404(store_id)
-        image_file = request.files.get('image')
-        image_url = None
-        if image_file:
-            upload_result = cloudinary.uploader.upload(image_file)
-            image_url = upload_result['secure_url']
-
-        address = store.address
-        # address = ?
-        if store:
-            store.title = store_data['title']
-            store.phone = store_data['phone']
-            store.image = image_url
-            store.address = address
-        else:
-            store = StoreModel(id=store_id, title=store_data['title'], phone=store_data['phone'], image=image_url,
-                               address=address)
-        db.session.add(store)
-        db.session.commit()
-
     def delete(self, store_id):
+        """
+        Deletes a store
+        :param store_id:
+        :return:
+        """
         store = StoreModel.query.get_or_404(store_id)
         db.session.delete(store)
         db.session.commit()
@@ -58,39 +47,22 @@ class Store(MethodView):
 class StoreList(MethodView):
     @blp.response(200, StoreSchema(many=True))
     def get(self):
+        """
+        List all stores
+        :return:
+        """
         return StoreModel.query.all()
-
-    @blp.arguments(StoreSchema)
-    @blp.response(201, StoreSchema)
-    def post(self, store_data):
-        address = AddressModel(**store_data['address'])
-        image_file = request.files.get('image')
-        image_url = None
-        if image_file:
-            upload_result = cloudinary.uploader.upload(image_file)
-            image_url = upload_result['secure_url']
-        store = StoreModel(
-            title=store_data['title'],
-            phone=store_data['phone'],
-            image=image_url,
-            address=address,
-            owner=store_data['owner']
-        )
-        try:
-            db.session.add(store)
-            db.session.commit()
-        except IntegrityError:
-            abort(409, message='Store already exists')
-        except SQLAlchemyError:
-            abort(500, message="Something went wrong")
-
-        return store
 
 
 @blp.route('/store/<int:store_id>/categories')
 class CategoriesByStore(MethodView):
     @blp.response(200, CategorySchema(many=True))
     def get(self, store_id):
+        """
+        Categories in store
+        :param store_id:
+        :return:
+        """
         store = StoreModel.query.get_or_404(store_id)
         return store.categories
 
@@ -100,6 +72,11 @@ class SellerStore(MethodView):
     @jwt_required()
     @blp.response(200, StoreSchema)
     def get(self, user_id):
+        """
+        Return a seller's store
+        :param user_id:
+        :return:
+        """
         store = StoreModel.query.filter_by(owner_id=user_id).first()
 
         if not store:
@@ -113,6 +90,10 @@ class SellerStoreAdd(MethodView):
     @jwt_required()
     @blp.response(201, StoreSchema)
     def post(self):
+        """
+        A seller creates a store
+        :return:
+        """
         user_id = get_jwt_identity()
         types = request.form['types']
         types = json.loads(types)
@@ -173,6 +154,11 @@ class SellerStoreEdit(MethodView):
     @jwt_required()
     @blp.response(200, StoreSchema)
     def put(self, store_id):
+        """
+        A seller update a store
+        :param store_id:
+        :return:
+        """
         store = StoreModel.query.get_or_404(store_id)
         user_id = get_jwt_identity()
         types = request.form['types']

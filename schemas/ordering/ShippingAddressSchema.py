@@ -9,9 +9,11 @@ class ShippingAddressSchema(SQLAlchemyAutoSchema):
         model = ShippingAddressModel
         # load_instance = True
 
-    order_id = fields.Integer(required=True)
     street = fields.String(required=True)
     city = fields.String(required=True)
     phone = fields.String(required=True)
     postal_code = fields.String(required=True)
     country = fields.String(required=True)
+
+    # Relationships
+    order_id = fields.Integer(required=True)

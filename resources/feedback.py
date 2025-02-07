@@ -13,6 +13,11 @@ blp = Blueprint("Feedbacks", __name__, description="Operations on feedbacks")
 class ProductFeedback(MethodView):
     @blp.response(200, FeedbackSchema(many=True))
     def get(self, product_id):
+        """
+        Get a product feedbacks
+        :param product_id:
+        :return:
+        """
         product = ProductModel.query.get_or_404(product_id)
 
         return product.feedbacks.all()  # lazy="dynamic" means 'tags' is a query
@@ -20,6 +25,14 @@ class ProductFeedback(MethodView):
     @blp.arguments(FeedbackSchema)
     @blp.response(201, FeedbackSchema)
     def post(self, feedback_data, product_id):
+        """
+        Add a product feedback
+        :param feedback_data:
+        :param product_id:
+        :return:
+        """
+
+        # !!!!!!!
         if SubCategoryModel.query.filter(FeedbackModel.product_id == product_id, FeedbackModel.id == feedback_data["id"]).first():
             abort(400, message="A feedback with that name already exists in that product.")
 
@@ -42,11 +55,20 @@ class ProductFeedback(MethodView):
 class Feedback(MethodView):
     @blp.response(200, FeedbackSchema)
     def get(self, feedback_id):
+        """
+        Get one product feedback
+        :param feedback_id:
+        :return:
+        """
         feedback = FeedbackModel.query.get_or_404(feedback_id)
         return feedback
 
-
     def delete(self, feedback_id):
+        """
+        Delete one product feedback
+        :param feedback_id:
+        :return:
+        """
         feedback = FeedbackModel.query.get_or_404(feedback_id)
         try:
             db.session.delete(feedback)

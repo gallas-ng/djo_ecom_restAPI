@@ -14,4 +14,5 @@ class CartSchema(SQLAlchemyAutoSchema):
     session_id = fields.Str()
     user_id = fields.Integer(required=False)
 
+    # Relationships
     items = fields.Nested('CartItemSchema', many=True)

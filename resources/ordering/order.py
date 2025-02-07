@@ -16,7 +16,11 @@ class Order(MethodView):
     @jwt_required()
     @blp.response(201)
     def post(self):
-        user_id = get_jwt_identity()  # Retrieve the user ID from the JWT (if logged in)
+        """
+        Place an order for a user.
+        :return:
+        """
+        user_id = get_jwt_identity()
         data = request.json
 
         # Validate input
@@ -96,6 +100,11 @@ class OrderUpdate(MethodView):
     @jwt_required()
     @blp.response(204)
     def put(self, order_id):
+        """
+        Update an order status whenever it changes
+        :param order_id:
+        :return:
+        """
         user_id = get_jwt_identity()
         data = request.json()
 
@@ -141,7 +150,7 @@ class PurchaseHistoryResource(MethodView):
         )
 
         if not purchases:
-            return {"message": "Aucun achat trouvé pour ce magasin"}, 404
+            return {"message": "No purchase history for this store"}, 404
 
 
         purchases_data = [

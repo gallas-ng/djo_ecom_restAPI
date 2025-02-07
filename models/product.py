@@ -17,7 +17,7 @@ class ProductModel(db.Model):
     ref = db.Column(db.String(100), unique=False, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
 
-
+    #Relationship
     sub_category_id = db.Column(db.Integer, db.ForeignKey('sub_category.id'), nullable=True)
     sub_category = db.relationship('SubCategoryModel', back_populates='products')
 

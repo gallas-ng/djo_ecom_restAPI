@@ -26,13 +26,18 @@ from schemas.ordering.OrderSchema import OrderSchema
 from schemas.ordering.OrderItemSchema import OrderItemSchema
 from schemas.ordering.ShippingAddressSchema import ShippingAddressSchema
 
-blp = Blueprint("Users", __name__, description="Operations on users")
 
+blp = Blueprint("Users", __name__, description="Operations on users")
 
 @blp.route("/register")
 class UserRegister(MethodView):
     @blp.arguments(UserSchema)
     def post(self, user_data):
+        """
+        Add a user
+        :param user_data:
+        :return:
+        """
         user = UserModel.query.filter(
                 or_(
                     UserModel.username == user_data["username"],
@@ -64,7 +69,11 @@ class UserRegister(MethodView):
 class UserLogin(MethodView):
     @blp.arguments(UserSchema)
     def post(self, user_data):
-
+        """
+        Log a user
+        :param user_data:
+        :return:
+        """
         user = UserModel.query.filter(
             UserModel.email == user_data["email"]
         ).first()
@@ -81,6 +90,10 @@ class UserLogin(MethodView):
 @blp.route('/google-login')
 class GoogleLogin(MethodView):
     def post(self):
+        """
+        Log With Google
+        :return:
+        """
         data = request.get_json()
         token = data.get('token')
         isSeller = data.get('isSeller')
@@ -114,6 +127,7 @@ class GoogleLogin(MethodView):
             abort(400, message="Token Google invalide.")
 
 
+# Unused
 @blp.route("/logout")
 class UserLogout(MethodView):
     @jwt_required()
@@ -122,10 +136,17 @@ class UserLogout(MethodView):
         BLOCKLIST.add(jti)
         return {"message": "Successfully logged out"}, 200
 
+
+
 @blp.route('/user/<int:user_id>/pwd')
 class UserSecret(MethodView):
     @jwt_required()
     def put(self, user_id):
+        """
+        Update a user's password'
+        :param user_id:
+        :return:
+        """
         user = UserModel.query.filter_by(id=user_id).first()
         data = request.get_json()
         password = data.get('password')
@@ -141,13 +162,11 @@ class UserSecret(MethodView):
 
         return {"message": "Password updated successfully.", "user": user.to_dict()}, 200
 
+
 @blp.route("/user/<int:user_id>")
 class User(MethodView):
     """
     This resource can be useful when testing our Flask app.
-    We may not want to expose it to public users, but for the
-    sake of demonstration in this course, it can be useful
-    when we are manipulating data regarding the users.
     """
 
     @blp.response(200, UserSchema)
@@ -186,10 +205,13 @@ class User(MethodView):
 class TokenRefresh(MethodView):
     @jwt_required(refresh=True)
     def post(self):
+        """
+        Try to refresh token when it expires
+        :return:
+        """
         current_user = get_jwt_identity()
         print(current_user)
         new_token = create_access_token(identity=str(current_user), fresh=False)
-        # Make it clear that when to add the refresh token to the blocklist will depend on the app design
         # jti = get_jwt()["jti"]
         # BLOCKLIST.add(jti)
         return {"access_token": new_token}, 200
@@ -197,9 +219,14 @@ class TokenRefresh(MethodView):
 
 @blp.route("/user/<int:user_id>/orders")
 class UserDetails(MethodView):
-    # @jwt_required()
+    @jwt_required()
     @blp.response(200, OrderSchema(many=True))
     def get(self, user_id):
+        """
+        Retrieve a specific user's orders'
+        :param user_id:
+        :return:
+        """
         user = UserModel.query.get_or_404(user_id)
 
         if not user:

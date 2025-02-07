@@ -12,6 +12,7 @@ class CartModel(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC), onupdate=datetime.datetime.now)
     session_id = db.Column(db.String(255), nullable=True, unique=True)
 
+    # Relationship
     user = db.relationship('UserModel', back_populates='cart')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 

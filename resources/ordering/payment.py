@@ -18,31 +18,32 @@ class Checkout(MethodView):
     @jwt_required()
     @blp.response(200)
     def post(self):
+        """
+        Process to order payment
+        :return:
+        """
         user_id = get_jwt_identity()
         data = request.json
 
-        # Validate required fields
         if not data.get("order_id") or not data.get("payment_method"):
             abort(400, message="Missing required fields")
 
         order_id = data["order_id"]
         amount = data["amount"]
         payment_method = data["payment_method"]
+
         # Combine order_id, payment_method, and a timestamp
         raw_string = f"{order_id}-{payment_method}-{int(time.time() * 1000)}"
         # Generate a hash and truncate it to 9 characters
         transaction_id = hashlib.sha256(raw_string.encode()).hexdigest()[:9]
 
-        # Check if order exists
         order = OrderModel.query.filter_by(id=order_id).first()
         if not order:
             abort(404, message="Invalid order ID")
 
-        # Validate amount
         if order.total_amount != amount:
             abort(400, message="Payment amount does not match order total")
 
-        # Create a payment record
         payment = PaymentModel(
             order_id=order_id,
             amount=amount,
@@ -51,7 +52,6 @@ class Checkout(MethodView):
         )
         db.session.add(payment)
 
-        # Commit changes
         try:
             db.session.commit()
             # Simulate online payment gateway processing (e.g., PayPal)

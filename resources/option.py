@@ -16,12 +16,23 @@ blp = Blueprint('Options', __name__, description="Operations on options")
 class Option(MethodView):
     @blp.response(200, OptionSchema) # *1 What should be returned ?
     def get(self, option_id):
+        """
+        Get an option
+        :param option_id:
+        :return:
+        """
         option = OptionModel.query.get_or_404(id=option_id)
         return option
 
     @blp.arguments(OptionSchema)
     @blp.response(200, OptionSchema)
     def put(self, option_data, option_id):
+        """
+        Add an option
+        :param option_data:
+        :param option_id:
+        :return:
+        """
         # option_data = request.get_json()
         option = OptionModel.query.get(id=option_id)
         if option:
@@ -38,6 +49,11 @@ class Option(MethodView):
 
     @jwt_required()
     def delete(self, option_id):
+        """
+        Delete an option
+        :param option_id:
+        :return:
+        """
         # jwt = get_jwt()
         # if not jwt.get("is_admin"):
         #     abort(401, message="Admin privilege required.")
@@ -52,11 +68,20 @@ class OptionList(MethodView):
     # @jwt_required()
     @blp.response(200, OptionSchema(many=True))
     def get(self):
+        """
+        Query all options
+        :return:
+        """
         return OptionModel.query.all()
 
     @blp.arguments(OptionSchema)
     @blp.response(201, OptionSchema)
     def post(self, option_data):
+        """
+        Add an option
+        :param option_data:
+        :return:
+        """
         option = OptionModel(**option_data)
         try:
             db.session.add(option)
@@ -69,6 +94,12 @@ class OptionList(MethodView):
 class LinkOptionToProduct(MethodView):
     @blp.response(201, ProductOptionSchema)
     def post(self, product_id, option_id):
+        """
+        Add an option to a product
+        :param product_id:
+        :param option_id:
+        :return:
+        """
         product = ProductModel.query.get_or_404(product_id)
         option = OptionModel.query.get_or_404(option_id)
 
@@ -84,6 +115,12 @@ class LinkOptionToProduct(MethodView):
 
     @blp.response(200, ProductOptionSchema)
     def delete(self, product_id, option_id):
+        """
+        Remove an option from a product
+        :param product_id:
+        :param option_id:
+        :return:
+        """
         product = ProductModel.query.get_or_404(product_id)
         option = OptionModel.query.get_or_404(option_id)
 

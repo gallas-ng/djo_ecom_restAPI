@@ -17,6 +17,7 @@ class FeedbackModel(db.Model):
     nature = db.Column(db.Enum(natureEnum), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
 
+    #Relationship
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('UserModel', back_populates='feedbacks')
 

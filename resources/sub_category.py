@@ -15,6 +15,12 @@ class SubCategoryAdd(MethodView):
     @blp.arguments(SubCategorySchema)
     @blp.response(201, SubCategorySchema)
     def post(self, sub_category_data, category_id):
+        """
+        Add a new sub_category.
+        :param sub_category_data:
+        :param category_id:
+        :return:
+        """
         if SubCategoryModel.query.filter(SubCategoryModel.category_id == category_id,
                                          SubCategoryModel.label == sub_category_data["label"]).first():
             abort(400, message="A sub_category with that name already exists in that category.")
@@ -36,6 +42,11 @@ class SubCategoryAdd(MethodView):
 class SubCategory(MethodView):
     @blp.response(200, SubCategorySchema)
     def get(self, sub_category_id):
+        """
+        Get a sub_category.
+        :param sub_category_id:
+        :return:
+        """
         sub_category = SubCategoryModel.query.get_or_404(sub_category_id)
         return sub_category
 
@@ -50,6 +61,11 @@ class SubCategory(MethodView):
         description="Returned if the tag is assigned to one or more items. In this case, the tag is not deleted.",
     )
     def delete(self, sub_category_id):
+        """
+        Delete a sub_category.
+        :param sub_category_id:
+        :return:
+        """
         sub_category = SubCategoryModel.query.get_or_404(sub_category_id)
         try:
             db.session.delete(sub_category)
@@ -65,6 +81,11 @@ class SubCategory(MethodView):
 class ProductList(MethodView):
     @blp.response(200, SubCatProductsSchema(many=True))
     def get(self, sub_category_id):
+        """
+        Get all products for a sub_category.
+        :param sub_category_id:
+        :return:
+        """
         sub_category = SubCategoryModel.query.get_or_404(sub_category_id)
 
         return sub_category.products.all()
@@ -74,15 +95,11 @@ class StoreSubCatProductList(MethodView):
     @blp.response(200, ProductSchema(many=True))  # Utilisez le schéma approprié pour vos produits
     def get(self, store_id, sub_category_id):
         """
-        Filtre les produits d'une sous-catégorie spécifique dans un magasin donné.
+        Get all products for a store by sub_category.
         """
-        # Vérifier si le magasin existe
         store = StoreModel.query.get_or_404(store_id)
-
-        # Vérifier si la sous-catégorie existe
         sub_category = SubCategoryModel.query.get_or_404(sub_category_id)
 
-        # Filtrer les produits qui appartiennent à la sous-catégorie ET au magasin donné
         products = sub_category.products.filter_by(store_id=store_id).all()
 
         return products

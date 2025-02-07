@@ -10,6 +10,7 @@ class CategoryModel(db.Model):
     description = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
 
+    #Relationship
     type_id = db.Column(db.Integer, db.ForeignKey('type.id'))
     type = db.relationship('TypeModel', back_populates='categories')
 

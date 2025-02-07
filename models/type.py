@@ -7,6 +7,7 @@ class TypeModel(db.Model):
     label = db.Column(db.String(55), unique=True, nullable=False)
     code = db.Column(db.String(7), unique=True, nullable=False)
 
+    #Relationship
     stores = db.relationship('StoreModel', back_populates='types', secondary='store_type')
 
     categories = db.relationship('CategoryModel', back_populates='type', lazy='dynamic', cascade='all, delete-orphan')

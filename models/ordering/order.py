@@ -12,6 +12,7 @@ class OrderModel(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC), onupdate=datetime.datetime.now)
     shipping_mode = db.Column(db.Integer, nullable=False, default=0)
 
+    # Relationship
     user = db.relationship('UserModel', back_populates='orders')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
 

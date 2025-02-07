@@ -3,7 +3,7 @@ from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from marshmallow import fields, validate
 
 from db import db
-from models import GroupModel, UserModel  # Adjust import paths as needed
+from models import GroupModel, UserModel
 
 class GroupSchema(SQLAlchemyAutoSchema):
     class Meta:

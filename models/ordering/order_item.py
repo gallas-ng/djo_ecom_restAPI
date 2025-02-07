@@ -9,6 +9,7 @@ class OrderItemModel(db.Model):
     price = db.Column(db.Float, nullable=False)
     subtotal = db.Column(db.Float, nullable=False)  # quantity * price
 
+    #Relationship
     order_id = db.Column(db.Integer, db.ForeignKey('order.id'), nullable=False)
     order = db.relationship('OrderModel', back_populates='items')
 

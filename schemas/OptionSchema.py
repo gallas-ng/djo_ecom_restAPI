@@ -14,5 +14,6 @@ class OptionSchema(SQLAlchemyAutoSchema):
     label = fields.Str(required=True, validate=validate.Length(max=50))
     value = fields.Str()
 
+    # Relationships
     # products = fields.List(fields.Nested('ProductSchema'), dump_only=True)
 

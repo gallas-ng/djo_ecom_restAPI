@@ -16,7 +16,7 @@ blp = Blueprint("Cart", __name__, description="Operations on the shopping cart")
 
 @blp.route("/cart")
 class CartView(MethodView):
-    # to remove
+    # Unused -------------------------------------------
     @jwt_required(optional=True)
     @blp.response(200)
     def get(self):
@@ -33,50 +33,49 @@ class CartView(MethodView):
             return {"message": "Cart not found.", "session_id": str(uuid.uuid4())}, 404
 
         return cart
+    #---------------------------------------------------
+
 
     @jwt_required(optional=True)
-    # @blp.arguments(CartSchema)
+    # @blp.arguments(CartSchema) -- Since we changed the response body Marshmallow
+    # is no longer used for this method
     @blp.response(201)
     def post(self):
-        session_id = request.cookies.get('session_id')  # Récupère le session_id du cookie
+        """
+        Create or find a user's cart based on the session_id or user_id
+        :return:
+        """
+        session_id = request.cookies.get('session_id')
         user_id = None
 
         try:
-            # Vérifie la validité ou l'expiration du JWT
             verify_jwt_in_request(optional=True)
-            user_id = get_jwt_identity()  # Récupère l'identité de l'utilisateur si connecté
+            user_id = get_jwt_identity()
         except Exception as e:
-            # Ignorer les erreurs liées aux tokens expirés ou manquants
+            # Keep User_id None when a jwt error is raised
             pass
 
         cart = None
 
         if user_id:
-            # Cherche un panier lié à l'utilisateur
             cart = CartModel.query.filter_by(user_id=user_id).first()
             if not cart:
-                # Crée un panier pour l'utilisateur
                 cart = CartModel(user_id=user_id)
                 db.session.add(cart)
         elif session_id:
-            # Cherche un panier lié au session_id
             cart = CartModel.query.filter_by(session_id=session_id).first()
             if not cart:
-                # Crée un panier pour le session_id invité
                 cart = CartModel(session_id=session_id)
                 db.session.add(cart)
         else:
-            # Crée un nouveau session_id pour les invités
             session_id = str(uuid.uuid4())
             cart = CartModel(session_id=session_id)
             db.session.add(cart)
 
         db.session.commit()
 
-        # Réponse incluant les détails du panier
         response = make_response(jsonify({"message": "Cart created or fetched", "cart": cart.to_dict()}))
 
-        # Ajouter le session_id dans les cookies si nouvellement généré
         if not request.cookies.get('session_id'):
             response.set_cookie('session_id', session_id, httponly=True, max_age=3600 * 24 * 7)
 
@@ -86,17 +85,17 @@ class CartView(MethodView):
 @blp.route("/cart/item")
 class CartItemView(MethodView):
     @jwt_required(optional=True)
-    # @blp.arguments(CartItemSchema)
+    # @blp.arguments(CartItemSchema) -- Since we changed the response body Marshmallow
+    # is no longer used for this method
     @blp.response(201)
     def post(self):
-        """Add an item to the cart."""
-        user_id = get_jwt_identity()  # Récupère l'utilisateur connecté
-        session_id = request.cookies.get('session_id')  # Récupère le session_id du cookie
+        """Add an item to the cart or update the cart item"""
+        user_id = get_jwt_identity()
+        session_id = request.cookies.get('session_id')
 
         if not user_id and not session_id:
             abort(400, message="No user or session ID found")
 
-        # Récupérer le panier
         cart = None
         if user_id:
             cart = CartModel.query.filter_by(user_id=user_id).first()
@@ -106,7 +105,6 @@ class CartItemView(MethodView):
         if not cart:
             abort(400, message="Cart not found")
 
-        # Ajouter ou mettre à jour l'article
         data = request.get_json()
         product_id = data.get('product_id')
         quantity = data.get('quantity', 1)
@@ -115,7 +113,6 @@ class CartItemView(MethodView):
         if not product_id:
             abort(400, message="Product ID is required")
 
-        # Ajouter au panier
         cart.add_item(product_id, quantity, price_vat)
         db.session.commit()
 

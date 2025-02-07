@@ -11,6 +11,8 @@ class CartItemSchema(SQLAlchemyAutoSchema):
         include_relationships = True
 
     cart_id = fields.Integer(required=True)
-    product_id = fields.Integer(required=True)
     quantity = fields.Integer(required=True)
     price = fields.Float(required=True)
+
+    # Relationships
+    product_id = fields.Integer(required=True)

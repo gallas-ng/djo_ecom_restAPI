@@ -98,8 +98,8 @@ def create_app(db_url=None):
 
     cloudinary.config(
         cloud_name="db0jsyy64",
-        api_key="796289861528973",
-        api_secret="B3zVCM8uTHf9K_qVWJQ4IinJLMw",
+        api_key=os.getenv("CLOUDINARY_API_KEY"),
+        api_secret=os.getenv("CLOUDINARY_API_SECRET"),
         secure=True
     )
 
@@ -126,7 +126,6 @@ def create_app(db_url=None):
     admin.add_view(ProductAdminView(ProductModel, db.session, category='Item'))
     admin.add_view(OptionAdminView(OptionModel, db.session, category='Item'))
     admin.add_view(FeedbackAdminView(FeedbackModel, db.session, category='Item'))
-
 
 
     return app

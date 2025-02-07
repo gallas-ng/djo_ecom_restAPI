@@ -11,10 +11,12 @@ class OrderItemSchema(SQLAlchemyAutoSchema):
         # load_instance = True
         include_relationships = True
 
-    order_id = fields.Integer(required=True)
-    product_id = fields.Integer(required=True)
     quantity = fields.Integer(required=True)
     price = fields.Float(required=True)
     subtotal = fields.Float(required=True)
 
+    # Relationships
+    product_id = fields.Integer(required=True)
     product = fields.Nested(ProductSchema)
+
+    order_id = fields.Integer(required=True)

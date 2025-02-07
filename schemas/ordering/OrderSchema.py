@@ -10,9 +10,11 @@ class OrderSchema(SQLAlchemyAutoSchema):
         # load_instance = True
         include_relationships = True
 
-    user_id = fields.Integer(required=True)
     total_amount = fields.Float(required=True)
     status = fields.String(required=True)
-    items = fields.Nested('OrderItemSchema', many=True)
     shipping_mode = fields.Integer(required=True)
+
+    # Relationships
     shipping_address = fields.Nested('ShippingAddressSchema')
+    items = fields.Nested('OrderItemSchema', many=True)
+    user_id = fields.Integer(required=True)

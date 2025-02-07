@@ -10,7 +10,7 @@ class StoreSchema(SQLAlchemyAutoSchema):
     class Meta:
         sqla_session = db.session
         model = StoreModel
-        # load_instance = True  # Pour charger directement une instance de StoreModel
+        # load_instance = True
         include_relationships = True
 
     id = fields.Int(dump_only=True)

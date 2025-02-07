@@ -12,4 +12,5 @@ class GroupModel(db.Model):
     permissions = db.Column(db.JSON, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
 
+    #Relationship
     users = db.relationship('UserModel', back_populates='groups', secondary='user_group')

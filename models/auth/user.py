@@ -25,6 +25,7 @@ class UserModel(db.Model):
     isSeller = db.Column(db.Boolean, default=False, nullable=False)
     isBuyer = db.Column(db.Boolean, default=False, nullable=False)
 
+    # Relationship
     groups = db.relationship('GroupModel', back_populates='users', secondary='user_group')
 
     feedbacks = db.relationship('FeedbackModel', back_populates='user', lazy='dynamic', cascade='all, delete')

@@ -10,6 +10,7 @@ class SubCategoryModel(db.Model):
     description = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now(datetime.UTC))
 
+    #Relationship
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
     category = db.relationship('CategoryModel', back_populates='sub_categories')
 

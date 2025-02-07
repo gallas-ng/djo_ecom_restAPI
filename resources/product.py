@@ -18,11 +18,18 @@ from schemas.SubCategorySchema import SubCategorySchema
 blp = Blueprint("Products", __name__, description="Operations on products")
 
 
+# Not for a seller
 @blp.route("/sub_category/<string:sub_category_id>/product")
 class ProductList(MethodView):
     @blp.arguments(ProductSchema)
     @blp.response(201, ProductSchema)
     def post(self, product_data, sub_category_id):
+        """
+        Simple product add
+        :param product_data:
+        :param sub_category_id:
+        :return:
+        """
         if ProductModel.query.filter(ProductModel.sub_category_id == sub_category_id, ProductModel.id == product_data["id"]).first():
             abort(400, message="A product with that id already exists in that category.")
 
@@ -48,6 +55,11 @@ class ProductList(MethodView):
 class Product(MethodView):
     @blp.response(200, ProductSchema)
     def get(self, product_id):
+        """
+        Get a product
+        :param product_id:
+        :return:
+        """
         product = ProductModel.query.get_or_404(product_id)
         return product
 
@@ -57,6 +69,11 @@ class Product(MethodView):
         example={"message": "Product deleted."},
     )
     def delete(self, product_id):
+        """
+        Delete a product
+        :param product_id:
+        :return:
+        """
         product = ProductModel.query.get_or_404(product_id)
         try:
             db.session.delete(product)
@@ -72,6 +89,10 @@ class Product(MethodView):
 class ProductRate(MethodView):
     @blp.response(200)
     def put(self):
+        """
+        Add or update a product rate
+        :return:
+        """
         data = request.get_json()
         product = ProductModel.query.get_or_404(data["product_id"])
 
@@ -84,12 +105,17 @@ class ProductRate(MethodView):
 
         return "Product updated."
 
-
+# For a seller
 @blp.route('/store/<int:store_id>/product')
 class StoreProductList(MethodView):
     @jwt_required()
     @blp.response(200, ProductSchema)
     def post(self, store_id):
+        """
+        Add a product to a store
+        :param store_id:
+        :return:
+        """
         store = StoreModel.query.get_or_404(store_id)
         category = CategoryModel.query.get_or_404(int(request.form['category_id']))
 
@@ -132,6 +158,11 @@ class StoreProductList(MethodView):
     @jwt_required()
     @blp.response(200, ProductSchema(many=True))
     def get(self, store_id):
+        """
+        Get products specific to a store
+        :param store_id:
+        :return:
+        """
         user_id = get_jwt_identity()
         store = StoreModel.query.get_or_404(store_id)
         if store.owner_id != int(user_id):
@@ -144,6 +175,12 @@ class StoreProductList(MethodView):
 class ProductDetail(MethodView):
     @blp.response(200, ProductSchema)
     def put(self, store_id, product_id):
+        """
+        Update a store product
+        :param store_id:
+        :param product_id:
+        :return:
+        """
         store = StoreModel.query.get_or_404(store_id)
         product = ProductModel.query.get_or_404(product_id)
         category = CategoryModel.query.get_or_404(int(request.form['category_id']))
@@ -187,6 +224,12 @@ class ProductDetail(MethodView):
     @jwt_required()
     @blp.response(202)
     def delete(self, store_id, product_id):
+        """
+        Delete a product from a store
+        :param store_id:
+        :param product_id:
+        :return:
+        """
         store = StoreModel.query.get_or_404(store_id)
         product = ProductModel.query.get_or_404(product_id)
 

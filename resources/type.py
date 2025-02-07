@@ -16,12 +16,23 @@ blp = Blueprint('Types', __name__, description="Operations on types")
 class Type(MethodView):
     @blp.response(200, TypeSchema) # *1 What should be returned ?
     def get(self, type_id):
+        """
+        Get a type
+        :param type_id:
+        :return:
+        """
         type = TypeModel.query.get_or_404(id=type_id)
         return type
 
     @blp.arguments(TypeSchema)
     @blp.response(200, TypeSchema)
     def put(self, type_data, type_id):
+        """
+        Update a type
+        :param type_data:
+        :param type_id:
+        :return:
+        """
         # type_data = request.get_json()
         type = TypeModel.query.get(id=type_id)
         if type:
@@ -36,6 +47,11 @@ class Type(MethodView):
 
     @jwt_required()
     def delete(self, type_id):
+        """
+        Update a type
+        :param type_id:
+        :return:
+        """
         # jwt = get_jwt()
         # if not jwt.get("is_admin"):
         #     abort(401, message="Admin privilege required.")
@@ -50,11 +66,16 @@ class TypeList(MethodView):
     # @jwt_required()
     @blp.response(200, TypeSchema(many=True))
     def get(self):
+        """
+        Get All types
+        :return:
+        """
         return TypeModel.query.all()
 
     @blp.arguments(TypeSchema)
     @blp.response(201, TypeSchema)
     def post(self, type_data):
+        """Add a type"""
         type = TypeModel(**type_data)
         try:
             db.session.add(type)
@@ -63,8 +84,12 @@ class TypeList(MethodView):
             abort(500, message="Something went wrong")
         return type
 
+
 @blp.route("/store/<string:store_id>/type/<string:type_id>")
 class LinkTypeToStore(MethodView):
+    """
+    Handling many to many relationship between stores and types
+    """
     @blp.response(201, StoreTypeSchema)
     def post(self, store_id, type_id):
         store = StoreModel.query.get_or_404(store_id)
@@ -100,5 +125,10 @@ class LinkTypeToStore(MethodView):
 class StoresByType(MethodView):
     @blp.response(200, StoreCategorySchemaInc(many=True))
     def get(self, type_id):
+        """
+        Get the stores for a type
+        :param type_id:
+        :return:
+        """
         type = TypeModel.query.get_or_404(type_id)
         return type.stores
